@@ -1,9 +1,13 @@
 function Footer() {
   return (
-    
-    <footer
-      style={{width: "100%",height: "10vh",backgroundColor: "#C1E8FF",color: "black", display: "flex", justifyContent: "center", alignItems: "center", }} >
-      <p>© 2026 Mawel Motors. All rights reserved.</p>
+    <footer className="flex h-20 w-full items-center justify-center border-t border-gray-200 bg-gray-50 text-gray-500 shadow-sm">
+      <p className="m-0 text-sm font-medium tracking-wide">
+        © 2026{" "}
+        <span className="font-bold text-gray-800">
+          Mawel Motors
+        </span>
+        . All rights reserved.
+      </p>
     </footer>
   );
 }

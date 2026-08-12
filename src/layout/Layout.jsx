@@ -4,7 +4,7 @@ import Footer from "../component/Footer";
 
 function Layout() {
   return (
-    <div>
+    <div >
       
       <Navbar />
        <main>
