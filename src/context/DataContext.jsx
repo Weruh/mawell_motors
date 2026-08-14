@@ -20,8 +20,24 @@ export function DataProvider({ children }) {
    setProduct((prevProduct) =>[...prevProduct, newProduct])
   }
 
+  const EditProduct = (id, updatedData) => {
+  setProduct((prevProducts) =>
+    prevProducts.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: updatedData.name,
+            description: updatedData.description,
+            price: updatedData.price,
+            image: updatedData.imageUrl,
+          }
+        : item
+    )
+  );
+};
+
   return (
-    <DataContext.Provider value={{ product, setProduct, AddProduct }}>
+    <DataContext.Provider value={{ product, setProduct, AddProduct , EditProduct}}>
       {children}
     </DataContext.Provider>
   );
