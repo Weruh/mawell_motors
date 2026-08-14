@@ -24,7 +24,7 @@ const dealershipdata = [
     id: 4,
     name: "Cascade Hatchback",
     description: "Handy hatchback with excellent fuel efficiency and compact design.",
-    price: "Asking price: KSH. 15M",
+    price: "KSH. 15M",
     image: "src/assets/hatchback.png",
   },
   {
