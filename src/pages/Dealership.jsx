@@ -1,7 +1,7 @@
-import { useData } from "../context/DataContext";
+import { useData } from "../context/DataContext.jsx";
 
 function Dealership() {
-  const { product } = useData();
+  const { product, loading, error } = useData();
 
   const containerStyle = {
     minHeight: "100vh",
@@ -84,6 +84,24 @@ function Dealership() {
     fontWeight: "600",
     fontSize: "1.125rem",
   };
+
+  if (loading) {
+    return (
+      <div style={containerStyle}>
+        <h1 style={headerStyle}>Our Dealership</h1>
+        <p style={{ textAlign: "center", color: "#64748b" }}>Loading cars...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={containerStyle}>
+        <h1 style={headerStyle}>Our Dealership</h1>
+        <p style={{ textAlign: "center", color: "#dc2626" }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div style={containerStyle}>

@@ -1,11 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 import { DataProvider } from './context/DataContext.jsx';
-import dealershipdata from './dealershipdata.js';
+
+const seedCars = [
+  { id: 1, name: 'Aurora Sedan', description: 'A stylish sedan.', price: 'KSH. 2,400,000', image: '/cars/sedan.png' },
+  { id: 2, name: 'Horizon SUV', description: 'A spacious SUV.', price: 'KSH. 3,200,000', image: '/cars/suv.png' },
+];
 
 function renderApp(initialRoute = '/') {
+  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(seedCars) });
+
   return render(
     <DataProvider>
       <MemoryRouter initialEntries={[initialRoute]}>
@@ -22,6 +28,10 @@ describe('Sample Test Suite', () => {
 });
 
 describe('App routing', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('renders the navbar on every route', () => {
     renderApp('/');
     expect(screen.getByRole('link', { name: /mawel motors/i })).toBeInTheDocument();
@@ -35,16 +45,16 @@ describe('App routing', () => {
     expect(screen.getByRole('link', { name: /view cars/i })).toBeInTheDocument();
   });
 
-  it('renders the dealership page with every car listed', () => {
+  it('renders the dealership page with every car fetched from the server', async () => {
     renderApp('/dealership');
     expect(screen.getByRole('heading', { name: /our dealership/i })).toBeInTheDocument();
 
-    dealershipdata.forEach((car) => {
-      expect(screen.getByRole('heading', { name: car.name })).toBeInTheDocument();
-    });
+    for (const car of seedCars) {
+      expect(await screen.findByRole('heading', { name: car.name })).toBeInTheDocument();
+    }
   });
 
-  it('renders the admin page with the add-product form and existing products', () => {
+  it('renders the admin page with the add-product form and existing products', async () => {
     renderApp('/admin');
     expect(screen.getByRole('heading', { name: /admin panel/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/car name/i)).toBeInTheDocument();
@@ -53,7 +63,8 @@ describe('App routing', () => {
     expect(screen.getByLabelText(/image url/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /add car/i })).toBeInTheDocument();
 
-    expect(screen.getAllByRole('button', { name: /^edit$/i })).toHaveLength(dealershipdata.length);
+    expect(await screen.findAllByRole('button', { name: /^edit$/i })).toHaveLength(seedCars.length);
+    expect(screen.getAllByRole('button', { name: /^delete$/i })).toHaveLength(seedCars.length);
   });
 
   it('falls back to no matching layout content for an unknown route', () => {
