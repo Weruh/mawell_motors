@@ -1,8 +1,8 @@
 import  { useState } from "react";
-import { useData } from "/src/context/DataContext.jsx";
+import { useData } from "../context/DataContext.jsx";
 
 function Admin() {
-  const { AddProduct, product, EditProduct } = useData();
+  const { AddProduct, EditProduct, DeleteProduct, product, loading, error } = useData();
   const [editingId, setEditingId] = useState(null);
   const [data, setData] = useState({ name: "", description: "", price: "", imageUrl: "" });
 
@@ -10,14 +10,14 @@ function Admin() {
     setData({ ...data, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     if (editingId != null) {
-      EditProduct(editingId, data);
+      await EditProduct(editingId, data);
       setEditingId(null);
     } else {
-      AddProduct(data.name, data.description, data.price, data.imageUrl);
+      await AddProduct(data.name, data.description, data.price, data.imageUrl);
     }
 
     setData({ name: "", description: "", price: "", imageUrl: "" });
@@ -31,6 +31,11 @@ function Admin() {
   function handleCancel() {
     setEditingId(null);
     setData({ name: "", description: "", price: "", imageUrl: "" });
+  }
+
+  function handleDelete(id) {
+    DeleteProduct(id);
+    if (editingId === id) handleCancel();
   }
 
   return (
@@ -83,6 +88,9 @@ function Admin() {
         <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <h2 className="mb-6 text-xl font-bold text-slate-800">Existing Products</h2>
 
+          {loading && <p className="text-sm text-slate-500">Loading cars...</p>}
+          {error && <p className="text-sm font-medium text-red-600">{error}</p>}
+
           <div className="space-y-4">
             {product.map((car) => (
               <div key={car.id} className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
@@ -91,9 +99,14 @@ function Admin() {
                   <p className="text-sm text-slate-500">{car.price}</p>
                 </div>
 
-                <button type="button" onClick={() => handleEdit(car)} className="rounded-lg bg-slate-800 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-900">
-                  Edit
-                </button>
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => handleEdit(car)} className="rounded-lg bg-slate-800 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-900">
+                    Edit
+                  </button>
+                  <button type="button" onClick={() => handleDelete(car.id)} className="rounded-lg bg-red-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-red-700">
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
