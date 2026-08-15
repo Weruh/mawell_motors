@@ -1,13 +1,6 @@
 {
   "cars": [
     {
-      "id": 1,
-      "name": "Aurora Sedan",
-      "description": "A stylish and efficient sedan with advanced features and a comfortable interior.",
-      "price": "KSH. 2,400,000",
-      "image": "/cars/sedan.png"
-    },
-    {
       "id": 2,
       "name": "Horizon SUV",
       "description": "High-performance SUV with spacious interior and advanced safety features.",
