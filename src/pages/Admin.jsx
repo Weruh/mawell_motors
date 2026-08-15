@@ -68,7 +68,7 @@ function Admin() {
 
             <div className="flex justify-center gap-4 border-t border-slate-100 pt-6">
               <button type="submit" className="rounded-lg bg-sky-500 px-7 py-3 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-sky-600 hover:shadow-md">
-                {editingId !== null ? "Update Product" : "Add Product"}
+                {editingId !== null ? "Update Car" : "Add Car"}
               </button>
 
               {editingId !== null && (
