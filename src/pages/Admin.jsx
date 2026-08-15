@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useData } from "/src/context/DataContext.jsx";
 
 function Admin() {
@@ -13,7 +13,7 @@ function Admin() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (editingId !== null) {
+    if (editingId != null) {
       EditProduct(editingId, data);
       setEditingId(null);
     } else {
