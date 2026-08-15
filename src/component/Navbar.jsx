@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import mawelLogo from "../assets/mawell3.png";
 
 function Navbar() {
   return (
@@ -9,7 +10,7 @@ function Navbar() {
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
             <img
-              src="/src/assets/mawell3.png"
+              src={mawelLogo}
               alt="Mawel Motors"
               className="h-14 w-auto object-contain transition-transform duration-200 hover:scale-105"
             />

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import heroImage from "../assets/homeimage2.png";
 
 function Home() {
   return (
@@ -36,7 +37,7 @@ function Home() {
 
         {/* Background Image */}
         <img
-          src="/src/assets/homeimage2.png"
+          src={heroImage}
           alt="Mawel Motors vehicles"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
