@@ -58,7 +58,7 @@ function Admin() {
 
             <div>
               <label htmlFor="price" className="mb-2 block text-sm font-semibold text-slate-700">Price</label>
-              <input id="price" type="number" name="price" placeholder="e.g. 4500000" value={data.price} onChange={handleChange} className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition duration-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-100" />
+              <input id="price" type="text" name="price" placeholder="e.g. 4500000" value={data.price} onChange={handleChange} className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none transition duration-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-100" />
             </div>
 
             <div>
