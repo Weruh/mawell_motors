@@ -5,8 +5,24 @@ import { DataProvider } from "../context/DataContext.jsx";
 import Admin from "./Admin";
 
 const mockCars = [
-  { id: 1, name: "Aurora Sedan", description: "A stylish sedan.", price: "KSH. 2,400,000", image: "/cars/sedan.png" },
+  { id: "1", name: "Aurora Sedan", description: "A stylish sedan.", price: "KSH. 2,400,000", image: "/cars/sedan.png" },
 ];
+
+const { getDocs, addDoc, updateDoc, deleteDoc, collection, doc } = vi.hoisted(() => ({
+  getDocs: vi.fn(),
+  addDoc: vi.fn(),
+  updateDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  collection: vi.fn(() => "carsCollection"),
+  doc: vi.fn((_db, _col, id) => id),
+}));
+
+vi.mock("firebase/firestore", () => ({ getDocs, addDoc, updateDoc, deleteDoc, collection, doc }));
+vi.mock("../firebase.js", () => ({ db: {} }));
+
+function snapshotFor(cars) {
+  return { docs: cars.map(({ id, ...data }) => ({ id, data: () => data })) };
+}
 
 function renderAdmin() {
   return render(
@@ -24,20 +40,8 @@ describe("Admin page", () => {
   it("creates a new car through the form", async () => {
     const user = userEvent.setup();
 
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCars) })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            id: 2,
-            name: "Nimbus Coupe",
-            description: "A nimble coupe.",
-            price: "KSH. 2,800,000",
-            image: "/cars/coupe.png",
-          }),
-      });
+    getDocs.mockResolvedValueOnce(snapshotFor(mockCars));
+    addDoc.mockResolvedValueOnce({ id: "2" });
 
     renderAdmin();
     await screen.findByText("Aurora Sedan");
@@ -54,20 +58,8 @@ describe("Admin page", () => {
   it("edits an existing car", async () => {
     const user = userEvent.setup();
 
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCars) })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            id: 1,
-            name: "Aurora Sedan LX",
-            description: "A stylish sedan.",
-            price: "KSH. 2,400,000",
-            image: "/cars/sedan.png",
-          }),
-      });
+    getDocs.mockResolvedValueOnce(snapshotFor(mockCars));
+    updateDoc.mockResolvedValueOnce(undefined);
 
     renderAdmin();
     await screen.findByText("Aurora Sedan");
@@ -84,10 +76,8 @@ describe("Admin page", () => {
   it("deletes a car", async () => {
     const user = userEvent.setup();
 
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockCars) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) });
+    getDocs.mockResolvedValueOnce(snapshotFor(mockCars));
+    deleteDoc.mockResolvedValueOnce(undefined);
 
     renderAdmin();
     await screen.findByText("Aurora Sedan");

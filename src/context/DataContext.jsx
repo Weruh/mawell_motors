@@ -1,6 +1,15 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "../firebase.js";
 
-const API_URL = "http://localhost:4000/cars";
+const carsCollection = collection(db, "cars");
 
 export const DataContext = createContext();
 
@@ -10,10 +19,9 @@ export function DataProvider({ children }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => {
-        setProduct(data);
+    getDocs(carsCollection)
+      .then((snapshot) => {
+        setProduct(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
         setLoading(false);
       })
       .catch(() => {
@@ -23,40 +31,32 @@ export function DataProvider({ children }) {
   }, []);
 
   const AddProduct = async (newName, newDescription, newPrice, imageUrl) => {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: newName,
-        description: newDescription,
-        price: newPrice,
-        image: imageUrl,
-      }),
-    });
-    const newProduct = await res.json();
-    setProduct((prevProduct) => [...prevProduct, newProduct]);
+    const newCar = {
+      name: newName,
+      description: newDescription,
+      price: newPrice,
+      image: imageUrl,
+    };
+    const docRef = await addDoc(carsCollection, newCar);
+    setProduct((prevProduct) => [...prevProduct, { id: docRef.id, ...newCar }]);
   };
 
   const EditProduct = async (id, updatedData) => {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: updatedData.name,
-        description: updatedData.description,
-        price: updatedData.price,
-        image: updatedData.imageUrl,
-      }),
-    });
-    const updated = await res.json();
-    setProduct((prevProducts) =>
-      prevProducts.map((item) => (item.id === id ? updated : item))
+    const updated = {
+      name: updatedData.name,
+      description: updatedData.description,
+      price: updatedData.price,
+      image: updatedData.imageUrl,
+    };
+    await updateDoc(doc(db, "cars", id), updated);
+    setProduct((prevProduct) =>
+      prevProduct.map((item) => (item.id === id ? { id, ...updated } : item))
     );
   };
 
   const DeleteProduct = async (id) => {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    setProduct((prevProducts) => prevProducts.filter((item) => item.id !== id));
+    await deleteDoc(doc(db, "cars", id));
+    setProduct((prevProduct) => prevProduct.filter((item) => item.id !== id));
   };
 
   return (

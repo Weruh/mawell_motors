@@ -4,20 +4,33 @@ import { DataProvider } from "../context/DataContext.jsx";
 import Dealership from "./Dealership";
 
 const mockCars = [
-  { id: 1, name: "Aurora Sedan", description: "A stylish sedan.", price: "KSH. 2,400,000", image: "/cars/sedan.png" },
-  { id: 2, name: "Horizon SUV", description: "A spacious SUV.", price: "KSH. 3,200,000", image: "/cars/suv.png" },
+  { id: "1", name: "Aurora Sedan", description: "A stylish sedan.", price: "KSH. 2,400,000", image: "/cars/sedan.png" },
+  { id: "2", name: "Horizon SUV", description: "A spacious SUV.", price: "KSH. 3,200,000", image: "/cars/suv.png" },
 ];
+
+const { getDocs, addDoc, updateDoc, deleteDoc, collection, doc } = vi.hoisted(() => ({
+  getDocs: vi.fn(),
+  addDoc: vi.fn(),
+  updateDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  collection: vi.fn(() => "carsCollection"),
+  doc: vi.fn((_db, _col, id) => id),
+}));
+
+vi.mock("firebase/firestore", () => ({ getDocs, addDoc, updateDoc, deleteDoc, collection, doc }));
+vi.mock("../firebase.js", () => ({ db: {} }));
+
+function snapshotFor(cars) {
+  return { docs: cars.map(({ id, ...data }) => ({ id, data: () => data })) };
+}
 
 describe("Dealership page", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it("shows a loading state and then every car fetched from the server", async () => {
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockCars),
-    });
+  it("shows a loading state and then every car fetched from Firestore", async () => {
+    getDocs.mockResolvedValue(snapshotFor(mockCars));
 
     render(
       <DataProvider>
@@ -32,7 +45,7 @@ describe("Dealership page", () => {
   });
 
   it("shows an error message when the request fails", async () => {
-    global.fetch = vi.fn().mockRejectedValue(new Error("network error"));
+    getDocs.mockRejectedValue(new Error("network error"));
 
     render(
       <DataProvider>

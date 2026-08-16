@@ -5,12 +5,26 @@ import App from './App';
 import { DataProvider } from './context/DataContext.jsx';
 
 const seedCars = [
-  { id: 1, name: 'Aurora Sedan', description: 'A stylish sedan.', price: 'KSH. 2,400,000', image: '/cars/sedan.png' },
-  { id: 2, name: 'Horizon SUV', description: 'A spacious SUV.', price: 'KSH. 3,200,000', image: '/cars/suv.png' },
+  { id: '1', name: 'Aurora Sedan', description: 'A stylish sedan.', price: 'KSH. 2,400,000', image: '/cars/sedan.png' },
+  { id: '2', name: 'Horizon SUV', description: 'A spacious SUV.', price: 'KSH. 3,200,000', image: '/cars/suv.png' },
 ];
 
+const { getDocs, addDoc, updateDoc, deleteDoc, collection, doc } = vi.hoisted(() => ({
+  getDocs: vi.fn(),
+  addDoc: vi.fn(),
+  updateDoc: vi.fn(),
+  deleteDoc: vi.fn(),
+  collection: vi.fn(() => 'carsCollection'),
+  doc: vi.fn((_db, _col, id) => id),
+}));
+
+vi.mock('firebase/firestore', () => ({ getDocs, addDoc, updateDoc, deleteDoc, collection, doc }));
+vi.mock('./firebase.js', () => ({ db: {} }));
+
 function renderApp(initialRoute = '/') {
-  global.fetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(seedCars) });
+  getDocs.mockResolvedValue({
+    docs: seedCars.map(({ id, ...data }) => ({ id, data: () => data })),
+  });
 
   return render(
     <DataProvider>
