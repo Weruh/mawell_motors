@@ -1,22 +1,24 @@
-import React from 'react'; 
+import { Route, Routes } from "react-router-dom"
+import Layout from './layout/Layout'
+import Dealership from './pages/Dealership';
+import Home from './pages/Home';
+import Admin from './pages/Admin';
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { VehicleProvider } from './context/vehicleContext'; 
 
-import Admin from './components/Admin'; 
 
-export default function App() { 
-return ( 
-<VehicleProvider> 
-<Router> 
-<Routes> 
-{/* Admin Route */} 
-<Route path='/admin' element={<Admin />} /> 
 
-{/* Add your other routes here (e.g. Home, Vehicle Details, etc.) */} 
-</Routes> 
-</Router> 
-</VehicleProvider> 
-); 
-} 
+function App() {
+  return (
+    <Routes >
+      <Route path='/' element={<Layout /> }>
+      <Route index element={<Home />  }/>
+      <Route path='dealership' element={<Dealership />  }/>
+      <Route path='admin' element={<Admin />  }/>
+     </Route>
+      
+    </Routes>
+  )
+}
+
+export default App
