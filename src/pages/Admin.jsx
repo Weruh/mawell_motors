@@ -25,7 +25,7 @@ function Admin() {
 
   function handleEdit(car) {
     setEditingId(car.id);
-    setData({ name: car.name, description: car.description, price: car.price, imageUrl: car.imageUrl || car.image });
+    setData({ name: car.name, description: car.description, price: car.price, imageUrl: car.imageUrl });
   }
 
   function handleCancel() {
