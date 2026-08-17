@@ -4,7 +4,7 @@ import heroImage from "../assets/homeimage2.png";
 function Home() {
   return (
     <main className="w-full font-sans">
-      {/* Animation */}
+      
       <style>{`
         @keyframes slideUp {
           from {
